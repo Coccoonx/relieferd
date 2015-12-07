@@ -1,48 +1,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
     <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="center_horizontal"/>
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="center_horizontal" />
 
     <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_above="@+id/toolbar"
-            >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:padding="12dp">
 
         <ImageView
-                android:id="@+id/eeclogo"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/lri"/>
+            android:id="@+id/eeclogo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:src="@null" />
 
         <Button
-                android:id="@+id/find"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_centerHorizontal="true"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/eeclogo"
-                android:text="Find a church"/>
+            android:id="@+id/find"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/eeclogo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Find a church" />
 
         <Button
-                android:id="@+id/go"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_centerHorizontal="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/find"
-                android:text="Go!"/>
+            android:id="@+id/go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/find"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Go!" />
 
     </RelativeLayout>
 
