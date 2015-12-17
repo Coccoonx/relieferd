@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,8 +22,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.lri.eeclocalizer.Utils.CoreUtils;
 import com.lri.eeclocalizer.Utils.DirectionsJSONParser;
-
+import com.lri.eeclocalizer.core.model.Parish;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -72,17 +72,40 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
             @Override
             public void onClick(View v) {
                 // Checks, whether start and end locations are captured
-                if (markerPoints.size() >= 1) {
-//                    LatLng origin = markerPoints.get(0);
-                    LatLng dest = markerPoints.get(0);
+//                if (markerPoints.size() >= 1) {
+////                    LatLng origin = markerPoints.get(0);
+//                    LatLng dest = markerPoints.get(0);
+//
+//                    // Getting URL to the Google Directions API
+//                    String url = getDirectionsUrl(mCurrentLatLn, dest);
+//
+//                    DownloadTask downloadTask = new DownloadTask();
+//
+//                    // Start downloading json data from Google Directions API
+//                    downloadTask.execute(url);
+//                }
 
-                    // Getting URL to the Google Directions API
-                    String url = getDirectionsUrl(mCurrentLatLn, dest);
+                if (mCurrentLatLn != null) {
+                    Parish mostClosed = CoreUtils.getMinLatLng(mCurrentLatLn);
 
-                    DownloadTask downloadTask = new DownloadTask();
+                    if (mostClosed != null) {
+                        // Creating MarkerOptions
+                        MarkerOptions options = new MarkerOptions();
 
-                    // Start downloading json data from Google Directions API
-                    downloadTask.execute(url);
+                        // Setting the position of the marker
+                        options.position(mostClosed.getLatLng());
+                        options.snippet(mostClosed.getDisplayName());
+                        options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                        mGoogleMap.addMarker(options);
+
+                        // Getting URL to the Google Directions API
+                        String url = getDirectionsUrl(mCurrentLatLn, mostClosed.getLatLng());
+
+                        DownloadTask downloadTask = new DownloadTask();
+
+                        // Start downloading json data from Google Directions API
+                        downloadTask.execute(url);
+                    }
                 }
             }
         });
@@ -158,7 +181,7 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
                 iStream.close();
                 urlConnection.disconnect();
             } catch (RuntimeException e) {
-                Log.d("lri", "Exception "+Log.getStackTraceString(e));
+                Log.d("lri", "Exception " + Log.getStackTraceString(e));
             }
 
         }
@@ -236,6 +259,22 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    protected void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        mGoogleApiClient.connect();
+    }
+
     // Fetches data from url passed
     private class DownloadTask extends AsyncTask<String, Void, String> {
 
@@ -297,7 +336,7 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
 
-            ArrayList<LatLng> points ;
+            ArrayList<LatLng> points;
             PolylineOptions lineOptions = null;
 
             // Traversing through all the routes
@@ -334,21 +373,5 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
                 Log.d("lri", "onPostExecute " + Log.getStackTraceString(e));
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    protected void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        mGoogleApiClient.connect();
     }
 }
