@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="colorPrimary" type="color">#FF92BFCE</item>
+    <item name="colorPrimary" type="color">#FF2d9934</item>
 
-    <item name="colorPrimaryDark" type="color">#ff577483</item>
+    <item name="colorPrimary2" type="color">#FF469856</item>
 
-    <item name="colorAccent" type="color">#FF92BFCE</item>
+    <item name="colorPrimary3" type="color">#FF0f9d58</item>
 
-    <item name="keeperWindowBackground" type="color">#f5f5f5</item>
+    <item name="colorPrimaryDark" type="color">#ff084500</item>
+
+    <item name="colorPrimaryDark2" type="color">#ff0b8043</item>
+
+    <item name="colorAccent" type="color">#FF469856</item>
+
+    <item name="keeperWindowBackground" type="color">#ffffff</item>
+    <!--<item name="keeperWindowBackground" type="color">#f5f5f5</item>-->
 
     <item name="keeperPrimaryGrayColor" type="color">#ffd0d0d0</item>
 
     <item name="keeperTintGray" type="color">#ffaaaaaa</item>
 
-    <color name="colorPrimaryLight">#8092bfce</color>
+    <color name="colorPrimaryLight">#FF469856</color>
 
     <item name="colorOpacity" type="color">#3F000000</item>
 </resources>

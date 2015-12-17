@@ -1,13 +1,16 @@
 package com.lri.eeclocalizer;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.lri.eeclocalizer.Utils.UIUtils;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -16,14 +19,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        buildToolBar();
 
-        Button button = (Button) findViewById(R.id.go);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button go = (Button) findViewById(R.id.go);
+        Button find = (Button) findViewById(R.id.find);
+        go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, GoActivity.class));
             }
         });
+
+        UIUtils.setFont(UIUtils.Font.LIGHT, go, find);
     }
 
 
@@ -32,6 +39,32 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    private void buildToolBar() {
+        // Handle Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            // Set the toolbar title
+            TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
+            title.setText(R.string.app_name);
+            title.setTextSize(28.0f);
+
+            // Change the toolbar typeface
+            UIUtils.setFont(UIUtils.Font.ST_MARIE, toolbar);
+
+            // Set the toolbar navigation icon
+//            toolbar.setNavigationIcon(null);
+
+            // Use the toolbar as Actionbar
+            setSupportActionBar(toolbar);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setHomeButtonEnabled(false);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        }
     }
 
     @Override

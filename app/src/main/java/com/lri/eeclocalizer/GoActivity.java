@@ -1,30 +1,40 @@
 package com.lri.eeclocalizer;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.lri.eeclocalizer.Utils.CoreUtils;
 import com.lri.eeclocalizer.Utils.DirectionsJSONParser;
+import com.lri.eeclocalizer.Utils.UIUtils;
 import com.lri.eeclocalizer.core.model.Parish;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -36,14 +46,21 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
-public class GoActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
+public class GoActivity extends AppCompatActivity implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.CancelableCallback {
 
     GoogleMap mGoogleMap;
     ArrayList<LatLng> markerPoints;
     private MapFragment mMapFragment;
     private GoogleApiClient mGoogleApiClient;
     private LatLng mCurrentLatLn;
+    private int topPadding;
+    private ProgressDialog progressDialog;
+    Button btnDraw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +68,19 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
         setContentView(R.layout.activity_go);
 
         buildGoogleApiClient();
+        buildToolBar();
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(true);
+        progressDialog.setMessage("Searching ...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+
+
+        int x = UIUtils.getScreenWidth(this) - (int) UIUtils.convertDpToPixel(40, this);
+        int y = (int) UIUtils.convertDpToPixel(70, this);
+        topPadding = Math.min(x, y);
 
         // Initializing
         markerPoints = new ArrayList<LatLng>();
@@ -63,52 +93,10 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
 
 
         // Getting reference to Button
-        Button btnDraw = (Button) findViewById(R.id.btn_draw);
+        btnDraw = (Button) findViewById(R.id.btn_draw);
+        btnDraw.setVisibility(View.INVISIBLE);
 
 
-        // Click event handler for Button btn_draw
-        btnDraw.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // Checks, whether start and end locations are captured
-//                if (markerPoints.size() >= 1) {
-////                    LatLng origin = markerPoints.get(0);
-//                    LatLng dest = markerPoints.get(0);
-//
-//                    // Getting URL to the Google Directions API
-//                    String url = getDirectionsUrl(mCurrentLatLn, dest);
-//
-//                    DownloadTask downloadTask = new DownloadTask();
-//
-//                    // Start downloading json data from Google Directions API
-//                    downloadTask.execute(url);
-//                }
-
-                if (mCurrentLatLn != null) {
-                    Parish mostClosed = CoreUtils.getMinLatLng(mCurrentLatLn);
-
-                    if (mostClosed != null) {
-                        // Creating MarkerOptions
-                        MarkerOptions options = new MarkerOptions();
-
-                        // Setting the position of the marker
-                        options.position(mostClosed.getLatLng());
-                        options.snippet(mostClosed.getDisplayName());
-                        options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                        mGoogleMap.addMarker(options);
-
-                        // Getting URL to the Google Directions API
-                        String url = getDirectionsUrl(mCurrentLatLn, mostClosed.getLatLng());
-
-                        DownloadTask downloadTask = new DownloadTask();
-
-                        // Start downloading json data from Google Directions API
-                        downloadTask.execute(url);
-                    }
-                }
-            }
-        });
     }
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
@@ -188,59 +176,42 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
         return data;
     }
 
+    private void showGroup(LatLng... listTmpMarker) {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+        // Zoom the camera to see all the marquers
+        for (LatLng position : listTmpMarker) {
+            builder.include(position);
+        }
+
+        LatLngBounds bounds = builder.build();
+        int padding = 200; // offset from edges of the map in pixels
+
+        // Animate camera
+        mGoogleMap.setPadding(0, 0, 0, 0);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        mGoogleMap.animateCamera(cu);
+        mGoogleMap.setPadding(0, topPadding, 0, 0);
+
+
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Enable MyLocation Button in the Map
         mGoogleMap = googleMap;
         mGoogleMap.setMyLocationEnabled(true);
+        mGoogleMap.setBuildingsEnabled(true);
 
-        // Setting onclick event listener for the map
-        mGoogleMap.setOnMapClickListener(new OnMapClickListener() {
+        mGoogleMap.setPadding(0, topPadding, 0, UIUtils.getActionBarSize(this));
+//        mGoogleMap.setOnMarkerClickListener(this);
+//        mGoogleMap.setOnMapClickListener(this);
 
-            @Override
-            public void onMapClick(LatLng point) {
 
-                // Already 10 locations with 8 waypoints and 1 start location and 1 end location.
-                // Upto 8 waypoints are allowed in a query for non-business users
-                if (markerPoints.size() > 0) {
-                    markerPoints.clear();
-                    mGoogleMap.clear();
-                }
-
-                // Adding new item to the ArrayList
-                markerPoints.add(point);
-
-                // Creating MarkerOptions
-                MarkerOptions options = new MarkerOptions();
-
-                // Setting the position of the marker
-                options.position(point);
-
-                /**
-                 * For the start location, the color of marker is GREEN and
-                 * for the end location, the color of marker is RED and
-                 * for the rest of markers, the color is AZURE
-                 */
-                if (markerPoints.size() == 1) {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                }
-                // Add new marker to the Google Map Android API V2
-                mGoogleMap.addMarker(options);
-            }
-        });
-
-        // The map will be cleared on long click
-        mGoogleMap.setOnMapLongClickListener(new OnMapLongClickListener() {
-
-            @Override
-            public void onMapLongClick(LatLng point) {
-                // Removes all the points from Google Map
-                mGoogleMap.clear();
-
-                // Removes all the points in the ArrayList
-                markerPoints.clear();
-            }
-        });
+        UiSettings uiSettings = mGoogleMap.getUiSettings();
+        uiSettings.setCompassEnabled(false);
+        uiSettings.setTiltGesturesEnabled(false);
+        uiSettings.setZoomControlsEnabled(true);
 
     }
 
@@ -249,7 +220,59 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
         Location l = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (l != null) {
             mCurrentLatLn = new LatLng(l.getLatitude(), l.getLongitude());
+            UIUtils.moveCameraTo(mGoogleMap, mCurrentLatLn, this);
+        }
 
+        if (mCurrentLatLn != null) {
+            final Parish mostClosed = CoreUtils.getMinLatLng(mCurrentLatLn);
+
+            if (mostClosed != null) {
+                // Creating MarkerOptions
+                MarkerOptions options = new MarkerOptions();
+
+                // Setting the position of the marker
+                options.position(mostClosed.getLatLng());
+                options.snippet(mostClosed.getDisplayName());
+                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                mGoogleMap.addMarker(options);
+
+                // Getting URL to the Google Directions API
+                String url = getDirectionsUrl(mCurrentLatLn, mostClosed.getLatLng());
+
+                DownloadTask downloadTask = new DownloadTask();
+
+                // Start downloading json data from Google Directions API
+                downloadTask.execute(url);
+            }
+            progressDialog.dismiss();
+            showGroup(mCurrentLatLn, mostClosed.getLatLng());
+
+
+            btnDraw.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    String uri = String
+                            .format(Locale.ENGLISH,
+                                    "http://maps.google.com/maps?saddr=%f,%f(%s)&daddr=%f,%f (%s)",
+                                    mCurrentLatLn.latitude,
+                                    mCurrentLatLn.longitude,
+                                    "My position",
+                                    mostClosed.getLatLng().latitude,
+                                    mostClosed.getLatLng().longitude,
+                                    "" + mostClosed.getDisplayName());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    startActivity(intent);
+
+
+                }
+            });
+//            btnDraw.setVisibility(View.VISIBLE);
+
+        } else {
+            progressDialog.dismiss();
+            Toast.makeText(GoActivity.this, "Please enable your location service.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -257,6 +280,49 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
     @Override
     public void onConnectionSuspended(int i) {
 
+    }
+
+    private void buildToolBar() {
+        // Handle Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            // Set the toolbar title
+            TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
+            title.setText(R.string.app_name);
+            title.setTextSize(28.0f);
+
+            // Change the toolbar typeface
+            UIUtils.setFont(UIUtils.Font.ST_MARIE, toolbar);
+
+            // Set the toolbar navigation icon
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+
+            // Use the toolbar as Actionbar
+            setSupportActionBar(toolbar);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(false);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int itemID = item.getItemId();
+        switch (itemID) {
+            case android.R.id.home:
+//                intent = null;
+                super.onBackPressed();
+                finish();
+                break;
+
+            default:
+                throw new IllegalArgumentException("This menu item id is not valid : " + itemID);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -273,6 +339,21 @@ public class GoActivity extends FragmentActivity implements OnMapReadyCallback, 
                 .build();
 
         mGoogleApiClient.connect();
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
+    }
+
+    @Override
+    public void onFinish() {
+
+    }
+
+    @Override
+    public void onCancel() {
+
     }
 
     // Fetches data from url passed
