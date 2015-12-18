@@ -1,4 +1,4 @@
-package com.lri.eeclocalizer.Utils;
+package com.lri.eeclocalizer.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,10 +6,13 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -196,5 +199,11 @@ public class UIUtils {
         THIN, LIGHT, BOLD, REGULAR, ST_MARIE
     }
 
+    public static void applyFontToMenuItem(Font font, MenuItem mi) {
+        Typeface typeface = getTypeface(font);
+        SpannableString mNewTitle = new SpannableString(mi.getTitle());
+        mNewTitle.setSpan(new CustomTypefaceSpan("", typeface), 0, mNewTitle.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        mi.setTitle(mNewTitle);
+    }
 }
 

@@ -1,7 +1,12 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url "https://jitpack.io"
+        }
+
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:1.1.1'
     }
@@ -10,6 +15,9 @@ apply plugin: 'com.android.application'
 
 repositories {
     jcenter()
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 android {
@@ -39,5 +47,11 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:multidex:1.0.0'
     compile 'com.google.android.gms:play-services:8.3.0'
+    compile 'com.android.support:design:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.android.support:cardview-v7:22.2.0'
+    compile 'com.github.kanytu:android-parallax-recyclerview:v1.4'
+//    compile 'com.pkmmte.view:circularimageview:1.1'
 }

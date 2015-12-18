@@ -16,15 +16,19 @@ public enum Parish {
     Parish(int id, String displayName, double latitude, double longitude) {
         this.id = id;
         this.displayName = displayName;
-        this.location = new LatLng(5.4668672, 10.4164029);
+        this.location = new LatLng(latitude, longitude);
     }
 
     Parish[] getAllParish() {
         return Parish.values();
     }
 
-    public LatLng getLatLng(){
+    public LatLng getLatLng() {
         return this.location;
+    }
+
+    public int getId() {
+        return this.id;
     }
 
     public String getDisplayName() {

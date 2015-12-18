@@ -1,4 +1,4 @@
-package com.lri.eeclocalizer.Utils;
+package com.lri.eeclocalizer.utils;
 
 import android.util.Log;
 

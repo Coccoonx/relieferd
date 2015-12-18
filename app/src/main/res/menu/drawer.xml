@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_navigate"
+            android:checked="true"
+            android:title="Navigate" />
+        <item
+            android:id="@+id/navigation_search"
+            android:title="Search" />
+        <item
+            android:id="@+id/navigation_update"
+            android:title="Update" />
+    </group>
+
+    <item android:title="Others">
+        <menu>
+            <item
+                android:id="@+id/navigation_settings"
+                android:title="Settings" />
+            <item
+                android:id="@+id/navigation_about"
+                android:title="About" />
+        </menu>
+    </item>
+
+</menu>

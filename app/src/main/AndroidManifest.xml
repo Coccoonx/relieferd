@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lri.eeclocalizer">
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    package="com.lri.eeclocalizer" >
 
     <permission
         android:name="com.lri.eeclocalizer.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.lri.eeclocalizer.permission.MAPS_RECEIVE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -20,30 +17,34 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
-
     <application
         android:name=".EECLocalizerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:name=".uis.MainActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".GoActivity">
-
+        <activity android:name=".uis.GoActivity" >
+        </activity>
+        <activity android:name=".uis.ParishsActivity" >
         </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCjbMKf6ULynDjhL9-CI8nZVdk2nLZezPU " />
+
+        <activity
+            android:name=".uis.ParishDetails"
+            android:label="@string/title_activity_parish_details" >
+        </activity>
     </application>
 
 </manifest>

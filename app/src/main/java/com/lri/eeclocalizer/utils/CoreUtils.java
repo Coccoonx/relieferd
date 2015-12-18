@@ -1,11 +1,7 @@
-package com.lri.eeclocalizer.Utils;
+package com.lri.eeclocalizer.utils;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.lri.eeclocalizer.core.model.Parish;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 public class CoreUtils {

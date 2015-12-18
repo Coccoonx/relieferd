@@ -1,4 +1,4 @@
-package com.lri.eeclocalizer;
+package com.lri.eeclocalizer.uis;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -30,9 +30,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.lri.eeclocalizer.Utils.CoreUtils;
-import com.lri.eeclocalizer.Utils.DirectionsJSONParser;
-import com.lri.eeclocalizer.Utils.UIUtils;
+import com.lri.eeclocalizer.R;
+import com.lri.eeclocalizer.utils.CoreUtils;
+import com.lri.eeclocalizer.utils.DirectionsJSONParser;
+import com.lri.eeclocalizer.utils.UIUtils;
 import com.lri.eeclocalizer.core.model.Parish;
 
 import org.json.JSONObject;

@@ -1,36 +1,41 @@
-package com.lri.eeclocalizer;
+package com.lri.eeclocalizer.uis;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.lri.eeclocalizer.Utils.UIUtils;
+import com.lri.eeclocalizer.R;
+import com.lri.eeclocalizer.uis.recipient.adapters.ParishAdapter;
+import com.lri.eeclocalizer.utils.UIUtils;
 
 
-public class MainActivity extends AppCompatActivity {
+public class ParishsActivity extends AppCompatActivity {
+
+
+    private RecyclerView mRecyclerView;
+    private ParishAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_parishs_list);
+
         buildToolBar();
 
-        Button go = (Button) findViewById(R.id.go);
-        Button find = (Button) findViewById(R.id.find);
-        go.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, GoActivity.class));
-            }
-        });
+        mRecyclerView = (RecyclerView) findViewById(R.id.settingsRecyclerView);
 
-        UIUtils.setFont(UIUtils.Font.LIGHT, go, find);
+        // Set an adapter to this recycler view
+        mAdapter = new ParishAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+
+        // Set the behaviour of this recycler view
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
 
@@ -39,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onBackPressed();
+        finish();
+        return super.onOptionsItemSelected(item);
+
     }
 
     private void buildToolBar() {
@@ -55,30 +68,15 @@ public class MainActivity extends AppCompatActivity {
             UIUtils.setFont(UIUtils.Font.ST_MARIE, toolbar);
 
             // Set the toolbar navigation icon
-//            toolbar.setNavigationIcon(null);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
             // Use the toolbar as Actionbar
             setSupportActionBar(toolbar);
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(false);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
