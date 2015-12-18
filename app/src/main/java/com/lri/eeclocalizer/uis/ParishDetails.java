@@ -34,6 +34,9 @@ public class ParishDetails extends AppCompatActivity {
 //                return myContent.size();
 //            }
 //        };
+
+//        myAdapter.setParallaxHeader(LayoutInflater.from(this).inflate(
+//            R.layout.myParallaxView, myRecycler, false), myRecyclerView);
 //    }
 
     @Override

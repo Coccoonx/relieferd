@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/EECLocalizer.iml" filepath="$PROJECT_DIR$/EECLocalizer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Mobile.iml" filepath="$PROJECT_DIR$/Mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/relieferd2.iml" filepath="$PROJECT_DIR$/relieferd2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/relieferd.iml" filepath="$PROJECT_DIR$/relieferd.iml" />
     </modules>
   </component>
 </project>
